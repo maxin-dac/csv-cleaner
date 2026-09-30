@@ -1,4 +1,0 @@
-id,price_us,price_eu,qty,active,order_date,status,note
-001,1234.56,1234.56,3,True,2024-02-01,new,
-002,2100.0,2100.0,7,False,2024-05-13,sent,
-003,99.9,99.9,12,True,2024-09-03,paid,
