@@ -41,13 +41,13 @@ def aggregate(
     dup_keys: list[str] | None = None,
     dup_threshold: int = 85,
 ) -> tuple[dict, DetectionResult]:
-    profiles, dr_types = infer_types(df, threshold=threshold)
+    profiles = infer_types(df, threshold=threshold)
     dr_dates = normalize_dates(df, profiles)
     dr_text = normalize_text(df, profiles, case=case, cat_threshold=cat_threshold)
     occupied = {(c.column, c.row_index) for c in dr_dates.changes if c.column is not None}
     dr_coh = run_coherence(df, profiles, occupied=occupied, unify_nulls=unify_nulls)
     result = DetectionResult()
-    result.changes.extend(dr_types.changes)
+    # Type casts handled separately via build_type_changes
     result.changes.extend(dr_dates.changes)
     result.changes.extend(dr_text.changes)
     result.changes.extend(dr_coh.changes)
