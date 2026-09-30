@@ -22,7 +22,6 @@
 - [Rapports](#rapports)
 - [Données et limites](#donnees-et-limites)
 - [Configuration](#configuration)
-- [Tests et versioning](#tests-et-versioning)
 - [Structure du projet](#structure-du-projet)
 - [Licence](#licence)
 - [Auteur](#auteur)
