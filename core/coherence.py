@@ -2,13 +2,22 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from datetime import date
-from core.models import Change, DetectionResult, new_change_id, is_null_like
+from core.models import Change, DetectionResult, WarningMessage, new_change_id, is_null_like
 from core.normalize_dates import (
     _parse_unambiguous,
     _split_numeric_date,
     _norm_year,
     _make_iso,
     _parse_time_part,
+)
+from core.warning_keys import (
+    WARN_NULL_UNIFY,
+    WARN_AMBIGUOUS,
+    WARN_HIGH_NULL,
+    WARN_DUPLICATE_COLUMNS,
+    WARN_FUTURE_DATES,
+    WARN_EMAIL_SHAPE,
+    WARN_NEGATIVE_VALUES,
 )
 
 
@@ -45,7 +54,7 @@ def _check_ambiguous(df, profiles, ctx):
     warnings = []
     for col, p in profiles.items():
         if p.dtype_inferred == "string" and "numeric_locale_ambiguous" in p.flags:
-            warnings.append(f"column {col} kept as string: numeric locale ambiguous")
+            warnings.append(WarningMessage(WARN_AMBIGUOUS, {"col": col}))
     return [], warnings
 
 
@@ -53,7 +62,7 @@ def _check_high_null(df, profiles, ctx):
     warnings = []
     for col, p in profiles.items():
         if p.null_like_rate > 0.5:
-            warnings.append(f"column {col} has {p.null_like_rate:.0%} missing-like values")
+            warnings.append(WarningMessage(WARN_HIGH_NULL, {"col": col, "rate": p.null_like_rate}))
     return [], warnings
 
 
@@ -64,7 +73,7 @@ def _check_duplicate_columns(df, profiles, ctx):
     for i in range(len(cols)):
         for j in range(i + 1, len(cols)):
             if series[cols[i]] == series[cols[j]]:
-                warnings.append(f"columns {cols[i]} and {cols[j]} are identical")
+                warnings.append(WarningMessage(WARN_DUPLICATE_COLUMNS, {"col1": cols[i], "col2": cols[j]}))
     return [], warnings
 
 
@@ -111,7 +120,7 @@ def _check_future_dates(df, profiles, ctx):
             continue
         future = [iso for iso in _column_iso_dates(df[col]) if iso[:10] > today]
         if future:
-            warnings.append(f"column {col} has {len(future)} dates after {today}")
+            warnings.append(WarningMessage(WARN_FUTURE_DATES, {"col": col, "count": len(future), "today": today}))
     return [], warnings
 
 
@@ -129,7 +138,7 @@ def _check_email_shape(df, profiles, ctx):
             continue
         bad = [v for v in values if not EMAIL_RE.match(v)]
         if bad:
-            warnings.append(f"column {col} looks like email: {len(bad)} values do not match a basic email shape")
+            warnings.append(WarningMessage(WARN_EMAIL_SHAPE, {"col": col, "count": len(bad)}))
     return [], warnings
 
 
@@ -154,7 +163,7 @@ def _check_negative_values(df, profiles, ctx):
             continue
         negatives = sum(1 for v in df[col].astype(object).tolist() if not is_null_like(v) and (_to_float(v, p) or 0.0) < 0)
         if negatives:
-            warnings.append(f"column {col} has {negatives} negative values although its name suggests a non-negative quantity")
+            warnings.append(WarningMessage(WARN_NEGATIVE_VALUES, {"col": col, "count": negatives}))
     return [], warnings
 
 

@@ -3,6 +3,14 @@ from __future__ import annotations
 
 STRINGS = {
     "fr": {
+        "warn_ambiguous": "colonne {col} conservée comme chaîne : locale numérique ambiguë",
+        "warn_high_null": "colonne {col} a {rate:.0%} de valeurs manquantes",
+        "warn_duplicate_columns": "colonnes {col1} et {col2} sont identiques",
+        "warn_future_dates": "colonne {col} a {count} dates après {today}",
+        "warn_email_shape": "colonne {col} ressemble à des emails : {count} valeurs ne correspondent pas à une forme d'email basique",
+        "warn_negative_values": "colonne {col} a {count} valeurs négatives bien que son nom suggère une quantité non négative",
+        "resume_session": "Reprendre la dernière analyse",
+        "session_restored": "Session précédente restaurée.",
         "app_name": "CSVClean Studio",
         "app_subtitle": "Nettoyeur CSV intelligent",
         "version_label": "version",
@@ -103,6 +111,14 @@ STRINGS = {
         "and_more": "autres",
     },
     "en": {
+        "warn_ambiguous": "column {col} kept as string: numeric locale ambiguous",
+        "warn_high_null": "column {col} has {rate:.0%} missing-like values",
+        "warn_duplicate_columns": "columns {col1} and {col2} are identical",
+        "warn_future_dates": "column {col} has {count} dates after {today}",
+        "warn_email_shape": "column {col} looks like email: {count} values do not match a basic email shape",
+        "warn_negative_values": "column {col} has {count} negative values although its name suggests a non-negative quantity",
+        "resume_session": "Resume last analysis",
+        "session_restored": "Previous session restored.",
         "app_name": "CSVClean Studio",
         "app_subtitle": "Intelligent CSV cleaner",
         "version_label": "version",
@@ -207,3 +223,13 @@ STRINGS = {
 
 def t(key: str, lang: str) -> str:
     return STRINGS.get(lang, STRINGS["en"]).get(key, key)
+
+
+def format_warning(warn, lang: str) -> str:
+    if isinstance(warn, str):
+        return warn
+    msg = STRINGS.get(lang, STRINGS["en"]).get(warn.key, warn.key)
+    try:
+        return msg.format(**warn.params)
+    except (KeyError, ValueError):
+        return warn.key

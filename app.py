@@ -92,6 +92,7 @@ def run_analysis() -> None:
     s.warnings = dr.warnings
     s.blocked = dr.blocked_export
     s.analyzed = True
+    save_session(s)
 
 
 def apply_override(col: str) -> None:
@@ -144,8 +145,9 @@ def by_kind(changes, kinds) -> list:
     return [c for c in changes if c.kind in kinds]
 
 
-def warn_list_html(warnings) -> str:
-    return "<ul>" + "".join(f"<li>{esc(w)}</li>" for w in warnings) + "</ul>"
+def warn_list_html(warnings, lang: str) -> str:
+    formatted = [format_warning(w, lang) for w in warnings]
+    return "<ul>" + "".join(f"<li>{esc(f)}</li>" for f in formatted) + "</ul>"
 
 
 def profiles_df(profiles) -> pd.DataFrame:
@@ -192,6 +194,9 @@ def page_import() -> None:
     lang = st.session_state.lang
     s = st.session_state
     page_header(t("imp_title", lang), t("imp_sub", lang))
+    if s.get("_restore_msg"):
+        ok_box(s["_restore_msg"])
+        del s["_restore_msg"]
     up = st.file_uploader(t("imp_upload", lang), type=["csv"], key="uploader")
     if up is not None:
         df, trunc, enc, delim = read_csv_bytes(up.getvalue(), max_rows=MAX_ROWS)
@@ -233,6 +238,7 @@ def page_import() -> None:
                 s.blocked = False
                 s.analyzed = False
                 clean_prefixes("ovr_", "acc_", "rej_", "opt_dupkeys")
+                clear_session()
                 st.rerun()
         if s.analyzed:
             ok_box(t("imp_analyzed", lang))
@@ -271,7 +277,7 @@ def page_overview() -> None:
     st.dataframe(profiles_df(s.profiles), use_container_width=True, hide_index=True)
     section(t("ov_warnings", lang))
     if s.warnings:
-        card(warn_list_html(s.warnings))
+        card(warn_list_html(s.warnings, lang))
     else:
         ok_box(t("ov_nowarn", lang))
 
@@ -366,7 +372,7 @@ def page_report() -> None:
     st.dataframe(clean.head(50), use_container_width=True, hide_index=True)
     section(t("ov_warnings", lang))
     if s.warnings:
-        card(warn_list_html(s.warnings))
+        card(warn_list_html(s.warnings, lang))
     else:
         ok_box(t("ov_nowarn", lang))
     dcols = st.columns(4)
@@ -397,6 +403,7 @@ def main() -> None:
     init_state()
     st.set_page_config(page_title=t("app_name", st.session_state.lang), page_icon=FAVICON, layout="wide", initial_sidebar_state="expanded")
     load_css()
+    restore_session_if_available()
     render_sidebar(VERSION)
     view = render_nav()
     ROUTES[view]()

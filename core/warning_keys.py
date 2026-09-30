@@ -1,0 +1,9 @@
+from __future__ import annotations
+
+WARN_NULL_UNIFY = "warn_null_unify"
+WARN_AMBIGUOUS = "warn_ambiguous"
+WARN_HIGH_NULL = "warn_high_null"
+WARN_DUPLICATE_COLUMNS = "warn_duplicate_columns"
+WARN_FUTURE_DATES = "warn_future_dates"
+WARN_EMAIL_SHAPE = "warn_email_shape"
+WARN_NEGATIVE_VALUES = "warn_negative_values"
