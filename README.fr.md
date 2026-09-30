@@ -16,6 +16,7 @@
 
 - [Fonctionnalités](#fonctionnalites)
 - [Lancer en local](#lancer-en-local)
+- [Docker](#docker)
 - [Demo en ligne](#démo-en-ligne)
 - [Utiliser l'application](#utiliser-lapplication)
 - [Comment fonctionne le nettoyage](#comment-fonctionne-le-nettoyage)
@@ -55,6 +56,15 @@ Sous macOS ou Linux :
     streamlit run app.py
 
 Ouvrez l'URL locale affichée par Streamlit.
+
+## Docker
+
+Construisez et lancez l'image localement :
+
+    docker build -t csv-cleaner .
+    docker run --rm -p 8501:8501 csv-cleaner
+
+L'image expose le port 8501 et démarre l'application en mode headless ; le même conteneur tourne sur n'importe quel hôte disposant de Docker, ce qui couvre les déploiements auto-hébergés quand Streamlit Cloud n'est pas une option.
 
 ## Démo en ligne
 
