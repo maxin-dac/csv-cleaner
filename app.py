@@ -8,7 +8,7 @@ from ui.nav import render_nav, render_sidebar
 from ui.i18n import t
 from ui.components import page_header, section, card, kv_grid, warn_box, ok_box, render_changes, md_bold_to_html, esc
 from core.models import Change, new_change_id
-from core.io import read_csv_bytes, read_csv_path
+from core.io import read_csv_bytes
 from core.proposals import aggregate
 from core.duplicates import find_duplicates
 from core.apply import apply_changes
@@ -32,7 +32,6 @@ DTYPES = ["string", "int64", "float64", "bool", "category", "datetime"]
 CASES = ["keep", "lower", "upper", "title"]
 MAX_ROWS = 200000
 CAP = 200
-SAMPLES = [("messy", "samp_messy"), ("dates", "samp_dates"), ("dupes", "samp_dupes")]
 _FAV_BODY = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='6' fill='#4f46e5'/><g fill='none' stroke='#ffffff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M14 6l4 4-7 7-4-4z'/><path d='M7 13l-1.5 5.5L11 17'/></g></svg>"
 FAVICON = "data:image/svg+xml," + quote(_FAV_BODY, safe="")
 
@@ -197,13 +196,6 @@ def page_import() -> None:
     if up is not None:
         df, trunc, enc, delim = read_csv_bytes(up.getvalue(), max_rows=MAX_ROWS)
         load_df(df, up.name, trunc, enc, delim)
-    csm = st.columns(3)
-    for i, (slug, ik) in enumerate(SAMPLES):
-        with csm[i]:
-            if st.button(t(ik, lang), key=f"samp_{slug}", use_container_width=True):
-                path = ROOT / "data" / f"sample_{slug}.csv"
-                df, trunc, enc, delim = read_csv_path(path, max_rows=MAX_ROWS)
-                load_df(df, path.name, trunc, enc, delim)
     if s.df is not None:
         meta = s.get("_meta", {})
         section(t("imp_file", lang))
