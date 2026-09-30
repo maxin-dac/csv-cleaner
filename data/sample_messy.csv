@@ -1,0 +1,9 @@
+order_id,customer,city,amount,date,status,note
+1001,John Doe, Paris ,"$1,234.56",01/02/2024,new,
+1002,jane  smith,Lyon,"2.100,00",13/05/2024,Sent,N/A
+1003,John Doe,Paris,"$99.90",03/09/2024,NEW,-
+1004,bob martin, Marseille ,"$12,000.00",23/11/2024,paid,
+1005,JANE SMITH,lyon,"1.234,56",07/01/2024,sent,none
+1006,alice blue,Toulouse,"$45.00",19/03/2024,new,
+1007,bob  martin,marseille,"12.000,00",28/06/2024,Paid,--
+1008,carl grey,Nantes,"$7,890.12",02/08/2024,new,null

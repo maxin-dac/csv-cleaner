@@ -1,0 +1,4 @@
+id,price_us,price_eu,qty,active,order_date,status,note
+001,"1,234.56","1.234,56",3,true,01/02/2024,new,
+002,"2,100.00","2.100,00",7,false,13/05/2024,sent,N/A
+003,99.90,"99,90",12,true,03/09/2024,paid,-
