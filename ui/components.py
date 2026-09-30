@@ -3,6 +3,7 @@ import re
 import html
 import streamlit as st
 from ui.i18n import t
+from core.session_store import save_session
 
 
 _BOLD_RE = re.compile(r"\*\*(.+?)\*\*")
@@ -68,6 +69,7 @@ def set_status(cid: str, status: str) -> None:
     ch = st.session_state.change_index.get(cid)
     if ch is not None:
         ch.status = status
+        save_session(st.session_state)
 
 
 def change_row(ch, lang: str) -> None:

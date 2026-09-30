@@ -5,15 +5,26 @@ import pandas as pd
 import streamlit as st
 from ui.theme import load_css
 from ui.nav import render_nav, render_sidebar
-from ui.i18n import t
+from ui.i18n import t, format_warning
 from ui.components import page_header, section, card, kv_grid, warn_box, ok_box, render_changes, md_bold_to_html, esc
 from core.models import Change, new_change_id
 from core.io import read_csv_bytes
 from core.proposals import aggregate
 from core.duplicates import find_duplicates
 from core.apply import apply_changes
+from core.session_store import save_session, load_session, clear_session
 from report.builder import build_report
 from report.exporters import export_report
+
+
+ROOT = pathlib.Path(__file__).resolve().parent
+CASTABLE = {"int64", "float64", "bool", "category"}
+DTYPES = ["string", "int64", "float64", "bool", "category", "datetime"]
+CASES = ["keep", "lower", "upper", "title"]
+MAX_ROWS = 200000
+CAP = 200
+_FAV_BODY = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='6' fill='#4f46e5'/><g fill='none' stroke='#ffffff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M14 6l4 4-7 7-4-4z'/><path d='M7 13l-1.5 5.5L11 17'/></g></svg>"
+FAVICON = "data:image/svg+xml," + quote(_FAV_BODY, safe="")
 
 
 def _read_version() -> str:
@@ -26,14 +37,6 @@ def _read_version() -> str:
 
 
 VERSION = _read_version()
-ROOT = pathlib.Path(__file__).resolve().parent
-CASTABLE = {"int64", "float64", "bool", "category"}
-DTYPES = ["string", "int64", "float64", "bool", "category", "datetime"]
-CASES = ["keep", "lower", "upper", "title"]
-MAX_ROWS = 200000
-CAP = 200
-_FAV_BODY = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='6' fill='#4f46e5'/><g fill='none' stroke='#ffffff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M14 6l4 4-7 7-4-4z'/><path d='M7 13l-1.5 5.5L11 17'/></g></svg>"
-FAVICON = "data:image/svg+xml," + quote(_FAV_BODY, safe="")
 
 
 def init_state() -> None:
@@ -48,6 +51,19 @@ def init_state() -> None:
     s.setdefault("warnings", [])
     s.setdefault("blocked", False)
     s.setdefault("analyzed", False)
+    s.setdefault("_session_restored", False)
+
+
+def restore_session_if_available() -> None:
+    s = st.session_state
+    if s.get("_session_restored"):
+        return
+    saved = load_session()
+    if saved:
+        for k, v in saved.items():
+            s[k] = v
+        s["_session_restored"] = True
+        s["_restore_msg"] = t("session_restored", s.lang)
 
 
 def clean_prefixes(*prefixes) -> None:
@@ -128,7 +144,7 @@ def redetect_dupes() -> None:
     for c in ndr.changes:
         s.change_index[c.id] = c
     s.changes = keep
-    s.warnings = [w for w in s.warnings if "duplicate groups" not in w and "truncated" not in w] + ndr.warnings
+    s.warnings = [w for w in s.warnings if "duplicate groups" not in str(w) and "truncated" not in str(w)] + ndr.warnings
 
 
 def counts(changes) -> dict:
