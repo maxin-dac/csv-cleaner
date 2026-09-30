@@ -2,7 +2,8 @@ from __future__ import annotations
 import re
 import unicodedata
 from rapidfuzz import fuzz
-from core.models import Change, DetectionResult, new_change_id, is_null_like
+from core.models import Change, DetectionResult, WarningMessage, new_change_id, is_null_like
+from core.warning_keys import WARN_CAT_MERGED
 
 
 WS_RE = re.compile(r"\s+")
@@ -79,7 +80,7 @@ def normalize_text_column(series, name: str, dtype: str, *, case: str = "keep", 
             winner = max(members, key=lambda m: (freq.get(m, 0), -first.get(m, 10**9)))
             for m in members:
                 canon[m] = winner
-            warnings.append(f"merged category variants in {name}: {members} -> {winner}")
+            warnings.append(WarningMessage(WARN_CAT_MERGED, {"col": name, "members": ", ".join(members), "winner": winner}))
         by_cell = {c.row_index: c for c in changes if c.kind == "text_norm"}
         final: list[Change] = []
         for i in sorted(cleaned):

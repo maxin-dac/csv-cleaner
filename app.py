@@ -358,7 +358,7 @@ def page_report() -> None:
     if not (require_df() and require_analysis()):
         return
     clean, summ = apply_changes(s.df, s.changes, s.profiles)
-    report = build_report(s.profiles, s.changes, s.warnings, s.blocked, summ)
+    report = build_report(s.profiles, s.changes, [format_warning(w, lang) for w in s.warnings], s.blocked, summ)
     cc = counts(s.changes)
     kv_grid([
         (t("st_rows", lang), f"{summ['rows_before']} -> {summ['rows_after']}"),

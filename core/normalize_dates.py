@@ -1,7 +1,8 @@
 from __future__ import annotations
 import re
 from datetime import datetime, timedelta, timezone
-from core.models import Change, DetectionResult, new_change_id, is_null_like
+from core.models import Change, DetectionResult, WarningMessage, new_change_id, is_null_like
+from core.warning_keys import WARN_DATE_UNPARSED, WARN_DATE_AMBIGUOUS, WARN_DATE_NONE
 
 
 MONTHS = {
@@ -157,11 +158,11 @@ def normalize_date_column(series, name: str, *, allow_epoch_excel: bool = False,
     warnings: list[str] = []
     total_nn = len(nonnull_idx)
     if fail:
-        warnings.append(f"{fail} unparsed date values in column {name}")
+        warnings.append(WarningMessage(WARN_DATE_UNPARSED, {"col": name, "count": fail}))
     if ambig:
-        warnings.append(f"{ambig} ambiguous DMY/MDY dates left unchanged in column {name}")
+        warnings.append(WarningMessage(WARN_DATE_AMBIGUOUS, {"col": name, "count": ambig}))
     if resolved == 0 and ambig == 0 and total_nn > 0:
-        warnings.append(f"no recognizable dates in column {name}")
+        warnings.append(WarningMessage(WARN_DATE_NONE, {"col": name}))
     blocked = False
     if total_nn > 0:
         if resolved > 0 and fail / total_nn > fail_rate:

@@ -1,7 +1,8 @@
 from __future__ import annotations
 import re
 from rapidfuzz import fuzz
-from core.models import Change, DetectionResult, new_change_id, is_null_like
+from core.models import Change, DetectionResult, WarningMessage, new_change_id, is_null_like
+from core.warning_keys import WARN_DUP_UNKNOWN, WARN_DUP_TRUNCATED, WARN_DUP_GROUPS
 
 
 PUNCT_RE = re.compile(r"[^\w\s]")
@@ -44,7 +45,7 @@ def find_duplicates(df, key_columns: list[str], *, threshold: int = 85, max_buck
     cols = [str(c) for c in key_columns]
     missing = [c for c in cols if c not in df.columns]
     if missing:
-        result.warnings.append(f"duplicate keys reference unknown columns: {missing}")
+        result.warnings.append(WarningMessage(WARN_DUP_UNKNOWN, {"cols": ", ".join(missing)}))
         return result
     key_rows = df[cols].astype(object).values.tolist()
     all_rows = df.astype(object).values.tolist()
@@ -58,7 +59,7 @@ def find_duplicates(df, key_columns: list[str], *, threshold: int = 85, max_buck
         if len(members) < 2:
             continue
         if len(members) > max_bucket:
-            result.warnings.append(f"block '{sig}' has {len(members)} rows, truncated to {max_bucket} (possible missed duplicates)")
+            result.warnings.append(WarningMessage(WARN_DUP_TRUNCATED, {"sig": sig, "count": len(members), "max": max_bucket}))
             members = members[:max_bucket]
         parent = list(range(len(members)))
         for a in range(len(members)):
@@ -80,5 +81,5 @@ def find_duplicates(df, key_columns: list[str], *, threshold: int = 85, max_buck
                 result.changes.append(Change(new_change_id(), "dedup", None, i, keys[i], None, f"dedup:g{gid}", conf))
             gid += 1
     if result.changes:
-        result.warnings.append(f"{gid} approximate duplicate groups detected on {cols}")
+        result.warnings.append(WarningMessage(WARN_DUP_GROUPS, {"count": gid, "cols": ", ".join(cols)}))
     return result
