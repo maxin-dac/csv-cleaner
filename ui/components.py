@@ -6,6 +6,18 @@ from ui.i18n import t
 from core.session_store import save_session
 
 
+_WARN_SVG = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" '
+    'stroke-linecap="round" stroke-linejoin="round">'
+    '<path d="M12 3l9 16H3z"/><path d="M12 10v4"/><path d="M12 17l.01 0"/></svg>'
+)
+
+_OK_SVG = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+    'stroke-linecap="round" stroke-linejoin="round">'
+    '<path d="M5 12l4 4 10-10"/></svg>'
+)
+
 _BOLD_RE = re.compile(r"\*\*(.+?)\*\*")
 
 
@@ -43,14 +55,14 @@ def kv_grid(pairs) -> None:
 
 def warn_box(text: str) -> None:
     st.markdown(
-        f'<div class="warnbox"><svg viewBox="0 0 24 24"><use href="#warning"></use></svg><span>{_e(text)}</span></div>',
+        f'<div class="warnbox">{_WARN_SVG}<span>{_e(text)}</span></div>',
         unsafe_allow_html=True,
     )
 
 
 def ok_box(text: str) -> None:
     st.markdown(
-        f'<div class="okbox"><svg viewBox="0 0 24 24"><use href="#check"></use></svg><span>{_e(text)}</span></div>',
+        f'<div class="okbox">{_OK_SVG}<span>{_e(text)}</span></div>',
         unsafe_allow_html=True,
     )
 

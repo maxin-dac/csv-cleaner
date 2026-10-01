@@ -12,11 +12,10 @@ def read_css() -> str:
 
 
 def read_svg() -> str:
-    return (ASSETS / "icons.svg").read_text(encoding="utf-8")
-
-
-def read_layout() -> str:
-    return (ASSETS / "layout.html").read_text(encoding="utf-8")
+    svg_path = ASSETS / "icons.svg"
+    if svg_path.exists():
+        return svg_path.read_text(encoding="utf-8")
+    return ""
 
 
 def load_css() -> None:
