@@ -4,7 +4,7 @@ from urllib.parse import quote
 import pandas as pd
 import streamlit as st
 from ui.theme import load_css
-from ui.nav import render_nav, render_sidebar
+from ui.nav import render_topbar
 from ui.i18n import t, format_warning
 from ui.components import page_header, section, card, kv_grid, warn_box, ok_box, render_changes, md_bold_to_html, esc
 from core.models import Change, new_change_id
@@ -420,8 +420,7 @@ def main() -> None:
     st.set_page_config(page_title=t("app_name", st.session_state.lang), page_icon=FAVICON, layout="wide", initial_sidebar_state="expanded")
     load_css()
     restore_session_if_available()
-    render_sidebar(VERSION)
-    view = render_nav()
+    view = render_topbar(VERSION)
     ROUTES[view]()
 
 

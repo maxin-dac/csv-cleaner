@@ -8,7 +8,11 @@ ASSETS = ROOT / "assets"
 
 
 def read_css() -> str:
-    return (ASSETS / "styles.css").read_text(encoding="utf-8")
+    styles = (ASSETS / "styles.css").read_text(encoding="utf-8")
+    suite_styles = ASSETS / "suite.css"
+    if suite_styles.exists():
+        styles += "\n" + suite_styles.read_text(encoding="utf-8")
+    return styles
 
 
 def read_svg() -> str:
