@@ -67,6 +67,20 @@ def ok_box(text: str) -> None:
     )
 
 
+def info_box(text: str) -> None:
+    st.markdown(
+        f'<div class="infobox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span>{_e(text)}</span></div>',
+        unsafe_allow_html=True,
+    )
+
+
+def err_box(text: str) -> None:
+    st.markdown(
+        f'<div class="errbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg><span>{_e(text)}</span></div>',
+        unsafe_allow_html=True,
+    )
+
+
 def conf_badge_html(v: float) -> str:
     pct = int(round(float(v) * 100))
     cls = "b-high" if pct >= 90 else ("b-mid" if pct >= 60 else "b-low")

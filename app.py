@@ -183,7 +183,7 @@ def profiles_df(profiles) -> pd.DataFrame:
 
 def page_home() -> None:
     lang = st.session_state.lang
-    page_header(t("home_title", lang), t("home_sub", lang))
+    page_header(t("app_name", lang), t("home_sub", lang))
     section(t("home_how", lang))
     steps = "".join(f"<li>{md_bold_to_html(t(k, lang))}</li>" for k in ("home_s1", "home_s2", "home_s3"))
     card(f"<ol>{steps}</ol>")
