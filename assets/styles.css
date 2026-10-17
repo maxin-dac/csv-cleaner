@@ -18,8 +18,9 @@
   --dds-content-top-pad:4.75rem;
   --dds-sidebar-width:280px;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;transition:none!important;animation:none!important}
+*,*::before,*::after{box-sizing:border-box;transition:none!important;animation:none!important}
 *,*::before,*::after{font-family:var(--font-sans)!important}
+[data-testid="stIconMaterial"],.stIconMaterial,span[data-testid="stIconMaterial"]{font-family:"Material Symbols Rounded"!important;font-weight:normal!important;font-style:normal!important;font-size:24px;line-height:1;letter-spacing:normal;text-transform:none;white-space:nowrap;word-wrap:normal;direction:ltr;font-feature-settings:"liga";-webkit-font-feature-settings:"liga";-webkit-font-smoothing:antialiased}
 html,body,.stApp,[data-testid="stAppViewContainer"],[data-testid="stSidebar"],[data-testid="stHeader"],[data-testid="stToolbar"],[data-testid="stBottomBlockContainer"]{font-family:var(--font-sans)!important}
 body{background:var(--canvas);color:var(--text)}
 .stApp{background:var(--canvas);color:var(--text)}

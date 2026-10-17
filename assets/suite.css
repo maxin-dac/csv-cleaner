@@ -519,3 +519,31 @@ html, body, .stApp, [data-testid="stAppViewContainer"] {
     font-size: .76rem;
   }
 }
+
+[data-testid="stIconMaterial"], .stIconMaterial, span[data-testid="stIconMaterial"] {
+  font-family: "Material Symbols Rounded" !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: "liga";
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+}
+
+[data-testid="stExpander"] details summary span[data-testid="stIconMaterial"] {
+  font-size: 20px !important;
+  width: 20px !important;
+  min-width: 20px !important;
+  height: 20px !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
